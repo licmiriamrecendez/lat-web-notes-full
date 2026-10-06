@@ -4,6 +4,7 @@ import mongoose from 'mongoose';
 import jwt from 'jsonwebtoken';
 import User from '../models/user.js';
 
+
 export const register = async (req: Request, res: Response) => {
   const { email, password, name } = req.body;
 
@@ -15,6 +16,24 @@ export const register = async (req: Request, res: Response) => {
     });
     return;
   }
+
+  if (typeof email !== 'string' || typeof password !== 'string') {
+  res.status(400).json({
+    success: false,
+    data: null,
+    error: { message: 'Los campos email y password deben ser texto' },
+  });
+  return;
+}
+
+if (password.length < 8) {
+  res.status(400).json({
+    success: false,
+    data: null,
+    error: { message: 'La contraseña debe tener al menos 8 caracteres' },
+  });
+  return;
+}
 
   const hashedPassword = await bcrypt.hash(password, 10);
 
